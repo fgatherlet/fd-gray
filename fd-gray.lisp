@@ -145,7 +145,8 @@ Tries to read once from input-length to input-max (end of buffer)."
 (defmethod stream-read-sequence ((stream input-stream)
                                  seq start end &key &allow-other-keys)
   (check-if-open stream)
-  (let ((buffer (input-buffer stream)))
+  (let ((buffer (input-buffer stream))
+        xinput-index)
     (with-accessors ((input-index input-index)) stream
       (loop
          (unless (< start end)
@@ -158,11 +159,12 @@ Tries to read once from input-length to input-max (end of buffer)."
              (incf start)
              (incf input-index))
            (when (= input-index (input-length stream))
+             (setf xinput-index input-index)
              (setf input-index 0
-                   (input-length buffer) 0)
+                   (input-length stream) 0)
              (case (stream-input stream)
-               ((:eof) (return-from stream-read-sequence :eof))
-               ((nil) (return-from stream-read-sequence nil)))))))))
+               ((:eof) (return-from stream-read-sequence xinput-index))
+               ((nil) (return-from stream-read-sequence xinput-index)))))))))
 
 (defmethod close ((stream input-stream) &key abort)
   (declare (ignore abort))

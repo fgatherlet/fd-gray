@@ -29,7 +29,9 @@
   :version "0.1"
   :description "Unix file descriptor gray streams for Common Lisp"
   :depends-on ("cffi-unistd"
-	       "trivial-gray-streams")
+	       "trivial-gray-streams"
+               "cffi-fcntl"
+               )
   :components
   ((:file "package")
    (:file "fd-gray" :depends-on ("package"))))
